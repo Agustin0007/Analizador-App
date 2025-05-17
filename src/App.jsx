@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import { ToastContainer } from 'react-toastify';
 import Login from './components/login/Login';
@@ -25,7 +25,7 @@ function App() {
     <AuthProvider>
       <ThemeProvider>
         <GastosProvider>
-          <Router>
+          <BrowserRouter>
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
@@ -42,7 +42,7 @@ function App() {
               <Route path="/" element={<Navigate to="/dashboard" />} />
             </Routes>
             <ToastContainer />
-          </Router>
+          </BrowserRouter>
         </GastosProvider>
       </ThemeProvider>
     </AuthProvider>
