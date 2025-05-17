@@ -1,0 +1,218 @@
+.login-container {
+    min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.login-form {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 30px;
+  padding: 3rem;
+  width: 100%;
+  max-width: 480px;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+  animation: cardAppear 1s ease-out;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.login-form h2 {
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 2.5rem;
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(45deg, #2c3e50, #3498db);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.input-group {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 1.2rem 3rem;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid #e1e5f2;
+  border-radius: 15px;
+  color: #2c3e50;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.input-group input:focus {
+  border-color: #3498db;
+  box-shadow: 0 8px 25px rgba(52, 152, 219, 0.15);
+  transform: translateY(-2px);
+}
+
+.login-form button {
+  width: 100%;
+  padding: 1.2rem;
+  background: linear-gradient(45deg, #3498db, #2980b9);
+  border: none;
+  border-radius: 15px;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 20px rgba(52, 152, 219, 0.2);
+}
+
+.login-form button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(0, 153, 255, 0.3);
+}
+
+.switch-form {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: #7f8c8d;
+  font-size: 1.1rem;
+}
+
+.switch-form a {
+  color: #3498db;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.switch-form a:hover {
+  color: #2980b9;
+  text-decoration: underline;
+}
+
+@keyframes cardAppear {
+  0% { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Modo oscuro */
+.dark .login-form {
+  background: rgba(45, 55, 72, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark .login-form h2 {
+  background: linear-gradient(45deg, #a5b4fc, #818cf8);
+  -webkit-background-clip: text;
+}
+
+.dark .input-group input {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #f8f9fa;
+}
+
+.dark .input-group input:focus {
+  border-color: #818cf8;
+  box-shadow: 0 8px 25px rgba(129, 140, 248, 0.2);
+}
+
+.dark .login-form button {
+  background: linear-gradient(45deg, #818cf8, #6366f1);
+}
+
+.dark .switch-form {
+  color: #a0aec0;
+}
+
+.dark .switch-form a {
+  color: #a5b4fc;
+}
+
+.dark .switch-form a:hover {
+  color: #818cf8;
+}
+
+.dark .error-message {
+  background-color: rgba(220, 38, 38, 0.1);
+  border-color: rgba(220, 38, 38, 0.3);
+  color: #fca5a5;
+}
+
+.login-container.light {
+  background: linear-gradient(135deg, #e6e9f0 0%, #eef1f5 100%);
+  transition: background 0.5s ease;
+}
+
+.login-container.dark {
+  background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+  transition: background 0.5s ease;
+}
+
+.theme-toggle {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1000;
+  animation: float 3s ease-in-out infinite;
+}
+
+.theme-toggle.light {
+  background: #ffffff;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.theme-toggle.dark {
+  background: #2c3e50;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.theme-toggle:hover {
+  animation: none;
+  transform: scale(1.1) rotate(5deg);
+  background: var(--hover-bg, #f8f9fa);
+}
+
+.theme-toggle.dark:hover {
+  --hover-bg: #34495e;
+}
+
+.theme-icon {
+  font-size: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.theme-toggle.light .theme-icon {
+  color: #f39c12;
+}
+
+.theme-toggle.dark .theme-icon {
+  color: #f1c40f;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.error-message {
+  background-color: #fee2e2;
+  border: 1px solid #ef4444;
+  color: #dc2626;
+  padding: 0.75rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  text-align: center;
+}

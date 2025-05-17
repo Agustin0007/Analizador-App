@@ -1,0 +1,168 @@
+:root {
+  --primary: #3498db;
+  --primary-dark: #2980b9;
+  --text-primary: #2c3e50;
+  --text-secondary: #7f8c8d;
+  --bg-light: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+  --bg-dark: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+  --shadow-sm: 0 5px 15px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 10px 20px rgba(52, 152, 219, 0.2);
+  --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.1);
+}
+
+.register-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--bg-light);
+  position: relative;
+  overflow: hidden;
+  transition: background 0.5s ease;
+}
+
+.register-form {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 30px;
+  padding: 3rem;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: var(--shadow-lg);
+  animation: cardAppear 1s ease-out;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.register-form h2 {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(45deg, var(--text-primary), var(--primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.input-group {
+  margin-bottom: 2rem;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 1.2rem 3rem;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid #e1e5f2;
+  border-radius: 15px;
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.input-group input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 8px 25px rgba(52, 152, 219, 0.15);
+  transform: translateY(-2px);
+}
+
+.register-form button {
+  width: 100%;
+  padding: 1.2rem;
+  background: linear-gradient(45deg, var(--primary), var(--primary-dark));
+  border: none;
+  border-radius: 15px;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-md);
+}
+
+.register-form button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(0, 153, 255, 0.3);
+}
+
+.switch-form {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+.switch-form a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.switch-form a:hover {
+  color: var(--primary-dark);
+  text-decoration: underline;
+}
+
+.theme-toggle {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1000;
+  animation: float 3s ease-in-out infinite;
+}
+
+.theme-icon {
+  font-size: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+/* Dark Mode */
+.dark {
+  --primary: #818cf8;
+  --primary-dark: #6366f1;
+  --text-primary: #f8f9fa;
+  --text-secondary: #a0aec0;
+}
+
+.dark .register-container {
+  background: var(--bg-dark);
+}
+
+.dark .register-form {
+  background: rgba(45, 55, 72, 0.95);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark .input-group input {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark .theme-toggle {
+  background: #2c3e50;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Animations */
+@keyframes cardAppear {
+  from { 
+    opacity: 0; 
+    transform: translateY(30px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}

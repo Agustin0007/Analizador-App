@@ -1,0 +1,764 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --primary: #60a5fa;
+  --primary-dark: #3b82f6;
+  --text-primary: #374151;
+  --text-secondary: #6b7280;
+  --bg-light: #ffffff;
+  --bg-dark: #1a1a2e;
+  --border: #e5e7eb;
+}
+
+.dark-theme {
+  --text-primary: #f3f4f6;
+  --text-secondary: #9ca3af;
+  --bg-primary: #111827;
+  --bg-secondary: #1f2937;
+  --bg-light: #1f2937;
+  --border: #374151;
+}
+
+/* Estilos base */
+.gastos-container {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  padding: 20px;
+  transition: all 0.3s ease;
+}
+
+.gastos-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  animation: fadeInDown 0.6s ease-out;
+}
+
+.gastos-title {
+  color: var(--text-primary);
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Tabla de gastos */
+.gastos-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  background: var(--bg-light);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.table-header {
+  display: flex;
+  background-color: var(--primary);
+  color: white;
+  padding: 12px 15px;
+  font-weight: 600;
+}
+
+.table-header > div,
+.table-row > div {
+  flex: 1;
+}
+
+.table-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.table-row {
+  display: flex;
+  padding: 12px 15px;
+  border-bottom: 1px solid var(--border);
+  align-items: center;
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+}
+
+.table-row:hover {
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.categoria-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.categoria-icon {
+  font-size: 1.5rem;
+  color: var(--primary);
+  transition: all 0.3s ease;
+}
+
+.table-row:hover .categoria-icon {
+  transform: scale(1.2);
+}
+
+/* Botones de acción */
+/* Actualizar los estilos de las acciones */
+.actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  align-items: center;
+  min-width: 120px;
+}
+
+.edit-button, 
+.delete-button {
+  aspect-ratio: 1;
+  width: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  border: 2px solid;
+  padding: 0;
+}
+
+/* Actualizar media queries */
+@media (max-width: 768px) {
+  .actions {
+    min-width: 100px;
+    gap: 0.75rem;
+  }
+
+  .edit-button, 
+  .delete-button {
+    width: 40px;
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .actions {
+    min-width: 80px;
+    gap: 0.5rem;
+  }
+
+  .edit-button, 
+  .delete-button {
+    width: 36px;
+    font-size: 1rem;
+  }
+}
+.edit-button {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.delete-button {
+  color: #ef4444;
+  border-color: #ef4444;
+}
+
+.edit-button:hover {
+  background: var(--primary);
+  color: white;
+  transform: translateY(-3px) scale(1.1);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.delete-button:hover {
+  background: #ef4444;
+  color: white;
+  transform: translateY(-3px) scale(1.1);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.edit-button::after, 
+.delete-button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  border-radius: 100%;
+  transform: scale(1, 1) translate(-50%, -50%);
+  transform-origin: 50% 50%;
+}
+
+.edit-button:hover::after, 
+.delete-button:hover::after {
+  animation: ripple 1s ease-out;
+}
+
+/* Modal y formularios */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+  backdrop-filter: blur(10px);
+}
+
+.modal-content {
+  background: var(--bg-secondary);
+  border-radius: 16px;
+  padding: 2.5rem;
+  width: 90%;
+  max-width: 450px;
+  position: relative;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border);
+  animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  margin-top: 30px;
+}
+
+.close-button {
+  position: absolute;
+  top: -15px;
+  right: -15px;
+  background: #ef4444;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 1.5rem;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+}
+
+.close-button:hover {
+  background: #dc2626;
+  transform: rotate(90deg) scale(1.1);
+}
+
+/* Estilos de formulario unificados */
+.form-title {
+  color: var(--text-primary);
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 700;
+}
+
+.title-icon {
+  font-size: 1.8rem;
+  color: var(--primary);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+.input-icon-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+}
+
+.input-icon-wrapper:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.input-icon {
+  font-size: 1.3rem;
+  color: var(--primary);
+}
+
+input, 
+select, 
+.category-select {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-size: 1.05rem;
+  font-weight: 500;
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+.category-select option {
+  padding: 8px;
+  background-color: var(--bg-secondary);
+}
+
+/* Botón de submit */
+.submit-button {
+  width: 100%;
+  padding: 1.1rem;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+}
+
+.submit-button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  border-radius: 100%;
+  transform: scale(1, 1) translate(-50%, -50%);
+  transform-origin: 50% 50%;
+}
+
+.submit-button:hover::after {
+  animation: ripple 1s ease-out;
+}
+
+/* Botón flotante */
+.add-button {
+  position: fixed;
+  bottom: 2.5rem;
+  right: 2.5rem;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  width: auto;
+  height: auto;
+  padding: 1rem 1.75rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+}
+
+
+.dark-theme {
+  .input-icon-wrapper {
+    background: var(--bg-secondary);;
+    border-color: var(--border);
+  }
+
+  .input-icon-wrapper:focus-within {
+    background: var(--bg-secondary);;
+    border-color: var(--primary);
+  }
+
+  select option,
+  .category-select option {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+  }
+
+  .category-select {
+    background-color: var(--bg-secondary);
+  }
+
+  .category-select option {
+    background-color: var(--bg-primary);
+  }
+}
+
+/* Modal y formularios */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+  backdrop-filter: blur(10px);
+}
+
+.modal-content {
+  background: var(--bg-secondary);
+  border-radius: 16px;
+  padding: 2.5rem;
+  width: 90%;
+  max-width: 450px;
+  position: relative;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border);
+  animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  margin-top: 30px;
+}
+
+.close-button {
+  position: absolute;
+  top: -15px;
+  right: -15px;
+  background: #ef4444;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 1.5rem;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+}
+
+.close-button:hover {
+  background: #dc2626;
+  transform: rotate(90deg) scale(1.1);
+}
+
+/* Estilos de formulario unificados */
+.form-title {
+  color: var(--text-primary);
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 700;
+}
+
+.title-icon {
+  font-size: 1.8rem;
+  color: var(--primary);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+.input-icon-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+}
+
+.input-icon-wrapper:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.input-icon {
+  font-size: 1.3rem;
+  color: var(--primary);
+}
+
+input, 
+select, 
+.category-select {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-size: 1.05rem;
+  font-weight: 500;
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+.category-select option {
+  padding: 8px;
+  background-color: var(--bg-secondary);
+}
+
+/* Botón de submit */
+.submit-button {
+  width: 100%;
+  padding: 1.1rem;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+}
+
+.submit-button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  border-radius: 100%;
+  transform: scale(1, 1) translate(-50%, -50%);
+  transform-origin: 50% 50%;
+}
+
+.submit-button:hover::after {
+  animation: ripple 1s ease-out;
+}
+
+/* Botón flotante */
+.add-button {
+  position: fixed;
+  bottom: 2.5rem;
+  right: 2.5rem;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  width: auto;
+  height: auto;
+  padding: 1rem 1.75rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+}
+
+
+/* Estilos para el botón de editar en modo oscuro */
+.dark-theme .edit-button {
+  color: #ffffff !important;  /* Color azul más claro para mejor contraste */
+  border-color: #93c5fd !important;
+}
+
+.dark-theme .edit-button:hover {
+  background: #93c5fd !important;
+}
+
+/* Eliminar fondo de inputs en modo oscuro */
+.dark-theme .input-icon-wrapper {
+  background: transparent !important;
+  border-color: var(--border) !important;
+}
+
+.dark-theme input,
+.dark-theme select,
+.dark-theme .category-select {
+  background: transparent !important;
+}
+
+.dark-theme .input-icon-wrapper:focus-within {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2) !important;
+}
+
+@media (max-width: 768px) {
+  .gastos-container {
+    padding: 1rem;
+  }
+
+  .gastos-title {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .gastos-table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table-header,
+  .table-row {
+    display: grid;
+    grid-template-columns: 100px 1fr 80px;
+    min-width: 100%;
+    padding: 0.8rem;
+  }
+
+  .table-header > div,
+  .table-row > div {
+    padding: 0.5rem;
+  }
+
+  .table-header div:nth-child(3),
+  .table-row div:nth-child(3) {
+    display: none;
+  }
+
+  .actions {
+    justify-content: center;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  .edit-button,
+  .delete-button {
+    width: 42px;
+    height: 42px;
+    font-size: 1.2rem;
+  }
+
+  .categoria-icon {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .actions {
+    gap: 0.5rem;
+  }
+
+  .edit-button,
+  .delete-button {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
+}
+
+/* Animaciones */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0, 0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(20, 20);
+    opacity: 0;
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

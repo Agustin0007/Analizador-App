@@ -1,0 +1,65 @@
+:root {
+  --bg-light: #ffffff;
+  --text-light: #333333;
+  --primary: #4f46e5;
+  --bg-dark: #1a202c;
+  --text-dark: #f7fafc;
+}
+
+body {
+  background-color: var(--bg-light);
+  color: var(--text-light);
+  transition: all 0.3s ease;
+}
+
+body.dark {
+  background-color: var(--bg-dark);
+  color: var(--text-dark);
+}
+
+/* Asegúrate de que el Navbar también cambie */
+.navbar {
+  background-color: var(--bg-light);
+  transition: background-color 0.3s ease;
+}
+
+.dark .navbar {
+  background-color: var(--bg-dark);
+}
+
+/* Añade más componentes según sea necesario */
+.card {
+  background-color: var(--bg-light);
+  color: var(--text-light);
+}
+
+.dark .card {
+  background-color: #2d3748;
+  color: var(--text-dark);
+}
+
+/* Botones */
+button {
+  background-color: var(--primary);
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.dark button {
+  background-color: var(--primary);
+}
+
+/* Inputs */
+input, textarea, select {
+  background-color: var(--bg-light);
+  color: var(--text-light);
+  border: 1px solid #e2e8f0;
+}
+
+.dark input, 
+.dark textarea, 
+.dark select {
+  background-color: #2d3748;
+  color: var(--text-dark);
+  border-color: #4a5568;
+}

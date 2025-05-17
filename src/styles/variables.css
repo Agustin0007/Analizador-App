@@ -1,0 +1,17 @@
+:root {
+  --primary: #60a5fa;
+  --primary-dark: #3b82f6;
+  --text-primary: #374151;
+  --text-secondary: #6b7280;
+  --bg-light: #ffffff;
+  --bg-dark: #1f2937;
+  --border: #e5e7eb;
+}
+
+.dark-mode {
+  --text-primary: #f3f4f6;
+  --text-secondary: #9ca3af;
+  --bg-light: var(--bg-dark);
+  --primary: #93c5fd;
+  --border: #374151;
+}
