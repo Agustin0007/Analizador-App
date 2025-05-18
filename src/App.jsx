@@ -12,6 +12,11 @@ import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
 import Dashboard from './components/dashboard/Dashboard';
 
+const PublicRoute = ({ children }) => {
+  const { currentUser } = useAuth();
+  return currentUser ? <Navigate to="/dashboard" replace /> : children;
+};
+
 const PrivateRoute = ({ children }) => {
   const { currentUser, loading } = useAuth();
   
@@ -33,8 +38,19 @@ function App() {
         <ThemeProvider>
           <GastosProvider>
             <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
+              {/* Rutas públicas */}
+              <Route path="/login" element={
+                <PublicRoute>
+                  <Login />
+                </PublicRoute>
+              } />
+              <Route path="/register" element={
+                <PublicRoute>
+                  <Register />
+                </PublicRoute>
+              } />
+
+              {/* Rutas privadas */}
               <Route path="/dashboard" element={
                 <PrivateRoute>
                   <Dashboard />
@@ -45,9 +61,23 @@ function App() {
                   <Gastos />
                 </PrivateRoute>
               } />
-              <Route path="/" element={<Navigate to="/login" />} />
+
+              {/* Redirecciones */}
+              <Route path="/" element={<Navigate to="/login" replace />} />
+              <Route path="*" element={<Navigate to="/login" replace />} />
             </Routes>
-            <ToastContainer />
+            <ToastContainer 
+              position="top-right"
+              autoClose={3000}
+              hideProgressBar={false}
+              newestOnTop
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="light"
+            />
           </GastosProvider>
         </ThemeProvider>
       </BrowserRouter>
