@@ -15,15 +15,21 @@ import Dashboard from './components/dashboard/Dashboard';
 const PrivateRoute = ({ children }) => {
   const { currentUser, loading } = useAuth();
   
-  if (loading) return <div>Cargando...</div>;
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner">Cargando...</div>
+      </div>
+    );
+  }
   
-  return currentUser ? children : <Navigate to="/login" />;
+  return currentUser ? children : <Navigate to="/login" replace />;
 };
 
 function App() {
   return (
-    <BrowserRouter basename="/">
-      <AuthProvider>
+    <AuthProvider>
+      <BrowserRouter>
         <ThemeProvider>
           <GastosProvider>
             <Routes>
@@ -39,13 +45,13 @@ function App() {
                   <Gastos />
                 </PrivateRoute>
               } />
-              <Route path="/" element={<Navigate to="/dashboard" />} />
+              <Route path="/" element={<Navigate to="/login" />} />
             </Routes>
             <ToastContainer />
           </GastosProvider>
         </ThemeProvider>
-      </AuthProvider>
-    </BrowserRouter>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
