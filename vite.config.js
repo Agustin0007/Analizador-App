@@ -8,15 +8,9 @@ export default defineConfig({
       external: [
         'react-toastify',
         'react-icons',
-        'react-icons/fa',
-        'react-icons/md',
-        'react-icons/bs'
+        'chart.js',
+        'react-chartjs-2'
       ]
-    }
-  },
-  resolve: {
-    alias: {
-      'react-icons': 'react-icons'
     }
   }
 });
