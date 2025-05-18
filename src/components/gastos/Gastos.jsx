@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { toast } from 'react-toastify';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { useGastos } from '../../context/GastosContext';
 import { FaEdit, FaTrash, FaTimes } from 'react-icons/fa';
 import { BsSun, BsMoon } from 'react-icons/bs';
@@ -22,6 +23,7 @@ import { HiPlus } from 'react-icons/hi';
 import Navbar from '../Navbar/Navbar';
 import './Gastos.css';
 
+// Move CATEGORIAS to a separate constants file
 const CATEGORIAS = {
   alimentacion: { label: 'Alimentación', icon: MdFastfood },
   transporte: { label: 'Transporte', icon: MdDirectionsCar },
@@ -35,7 +37,8 @@ const CATEGORIAS = {
   otros: { label: 'Otros', icon: MdMoreHoriz }
 };
 
-const GastoForm = ({ onClose, onSubmit, editingGasto }) => {
+// Separate GastoForm component
+const GastoForm = React.memo(({ onClose, onSubmit, editingGasto }) => {
   const [formData, setFormData] = useState({
     monto: editingGasto?.monto || '',
     categoria: editingGasto?.categoria || '',
@@ -43,11 +46,19 @@ const GastoForm = ({ onClose, onSubmit, editingGasto }) => {
     descripcion: editingGasto?.descripcion || ''
   });
 
-  const handleSubmit = (e) => {
+  const handleChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  }, []);
+
+  const handleSubmit = useCallback((e) => {
     e.preventDefault();
     onSubmit(formData);
     onClose();
-  };
+  }, [formData, onSubmit, onClose]);
 
   const CategoryIcon = CATEGORIAS[formData.categoria]?.icon || MdMoreHoriz;
 
@@ -67,11 +78,14 @@ const GastoForm = ({ onClose, onSubmit, editingGasto }) => {
             <div className="input-icon-wrapper">
               <BsCurrencyDollar className="input-icon" />
               <input
+                name="monto"
                 type="number"
                 placeholder="Monto"
                 value={formData.monto}
-                onChange={(e) => setFormData({...formData, monto: e.target.value})}
+                onChange={handleChange}
                 required
+                min="0"
+                step="0.01"
               />
             </div>
           </div>
@@ -130,126 +144,107 @@ const GastoForm = ({ onClose, onSubmit, editingGasto }) => {
       </div>
     </div>
   );
-};
+});
+
+// Separate GastoRow component
+const GastoRow = React.memo(({ gasto, onEdit, onDelete }) => {
+  const CategoryIcon = CATEGORIAS[gasto.categoria]?.icon || MdMoreHoriz;
+  
+  return (
+    <div className="table-row">
+      <div>{new Date(gasto.fecha).toLocaleDateString()}</div>
+      <div className="categoria-cell">
+        <CategoryIcon className="categoria-icon" />
+        {CATEGORIAS[gasto.categoria]?.label || 'Otros'}
+      </div>
+      <div>{gasto.descripcion || '-'}</div>
+      <div>${Number(gasto.monto).toFixed(2)}</div>
+      <div className="actions">
+        <button onClick={() => onEdit(gasto)} className="edit-button">
+          <FaEdit />
+        </button>
+        <button onClick={() => onDelete(gasto.id)} className="delete-button">
+          <FaTrash />
+        </button>
+      </div>
+    </div>
+  );
+});
 
 const Gastos = () => {
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => 
+    localStorage.getItem('darkMode') === 'true'
+  );
   const { gastos = [], addGasto, editGasto, deleteGasto } = useGastos();
   const [showModal, setShowModal] = useState(false);
   const [editingGasto, setEditingGasto] = useState(null);
   const [showSidebar, setShowSidebar] = useState(false);
 
   useEffect(() => {
-    const isDark = localStorage.getItem('darkMode') === 'true';
-    setDarkMode(isDark);
-    document.body.classList.toggle('dark-mode', isDark);
+    document.body.classList.toggle('dark-mode', darkMode);
+  }, [darkMode]);
+
+  const toggleDarkMode = useCallback(() => {
+    setDarkMode(prev => {
+      const newValue = !prev;
+      localStorage.setItem('darkMode', newValue);
+      return newValue;
+    });
   }, []);
 
-  const toggleDarkMode = () => {
-    const newDarkMode = !darkMode;
-    setDarkMode(newDarkMode);
-    localStorage.setItem('darkMode', newDarkMode);
-    document.body.classList.toggle('dark-mode', newDarkMode);
-  };
+  const validateGasto = useCallback((gastoData) => {
+    const monto = parseFloat(gastoData.monto);
+    if (isNaN(monto) || monto <= 0) {
+      throw new Error('El monto debe ser un número mayor a 0');
+    }
+    if (!gastoData.categoria) {
+      throw new Error('Debe seleccionar una categoría');
+    }
+    const selectedDate = new Date(gastoData.fecha);
+    const currentDate = new Date();
+    if (selectedDate > currentDate) {
+      throw new Error('La fecha no puede ser futura');
+    }
+    if (gastoData.descripcion && gastoData.descripcion.length > 100) {
+      throw new Error('La descripción no puede exceder los 100 caracteres');
+    }
+  }, []);
 
-  const handleSubmit = (gastoData) => {
+  const handleSubmit = useCallback((gastoData) => {
     try {
-      // Validate amount (monto)
-      const monto = parseFloat(gastoData.monto);
-      if (isNaN(monto) || monto <= 0) {
-        toast.error('El monto debe ser un número mayor a 0', {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: darkMode ? "dark" : "light",
-        });
-        return;
-      }
-  
-      // Validate category
-      if (!gastoData.categoria) {
-        toast.warning('Debe seleccionar una categoría', {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: darkMode ? "dark" : "light",
-        });
-        return;
-      }
-  
-      // Validate date
-      const selectedDate = new Date(gastoData.fecha);
-      const currentDate = new Date();
-      if (selectedDate > currentDate) {
-        toast.error('La fecha no puede ser futura', {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: darkMode ? "dark" : "light",
-        });
-        return;
-      }
-  
-      // Validate description
-      if (gastoData.descripcion && gastoData.descripcion.length > 100) {
-        toast.warning('La descripción no puede exceder los 100 caracteres', {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: darkMode ? "dark" : "light",
-        });
-        return;
-      }
-  
+      validateGasto(gastoData);
+      
       if (editingGasto) {
         editGasto(editingGasto.id, gastoData);
-        toast.success('Gasto actualizado exitosamente', {
-          position: "top-right",
-          autoClose: 2000,
-          theme: darkMode ? "dark" : "light",
-        });
+        toast.success('Gasto actualizado exitosamente');
       } else {
         addGasto({
           ...gastoData,
           id: Date.now().toString(),
           fecha: gastoData.fecha
         });
-        toast.success('Gasto registrado exitosamente', {
-          position: "top-right",
-          autoClose: 2000,
-          theme: darkMode ? "dark" : "light",
-        });
+        toast.success('Gasto registrado exitosamente');
       }
       setShowModal(false);
       setEditingGasto(null);
     } catch (error) {
-      toast.error('Error al guardar el gasto: ' + error.message, {
-        position: "top-right",
-        autoClose: 4000,
-        theme: darkMode ? "dark" : "light",
-      });
-      console.error('Error al guardar el gasto:', error);
+      toast.error(error.message);
     }
-  };
+  }, [editingGasto, addGasto, editGasto, validateGasto]);
+
+  const sortedGastos = useMemo(() => 
+    [...gastos].sort((a, b) => new Date(b.fecha) - new Date(a.fecha)),
+    [gastos]
+  );
 
   return (
     <div className={`gastos-container ${darkMode ? 'dark-mode' : ''} ${showSidebar ? 'sidebar-open' : ''}`}>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        theme={darkMode ? "dark" : "light"}
+      />
+      
       <Navbar 
         activePage="gastos" 
         darkMode={darkMode} 
@@ -257,6 +252,7 @@ const Gastos = () => {
         showSidebar={showSidebar}
         setShowSidebar={setShowSidebar}
       />
+      
       <div className="gastos-header">
         <h1 className="gastos-title">Lista de Gastos</h1>
       </div>
@@ -271,31 +267,17 @@ const Gastos = () => {
         </div>
         
         <div className="table-body">
-          {gastos.map(gasto => {
-            const CategoryIcon = CATEGORIAS[gasto.categoria]?.icon || MdMoreHoriz;
-            return (
-              <div key={gasto.id} className="table-row">
-                <div>{new Date(gasto.fecha).toLocaleDateString()}</div>
-                <div className="categoria-cell">
-                  <CategoryIcon className="categoria-icon" />
-                  {CATEGORIAS[gasto.categoria]?.label || 'Otros'}
-                </div>
-                <div>{gasto.descripcion || '-'}</div>
-                <div>${Number(gasto.monto).toFixed(2)}</div>
-                <div className="actions">
-                  <button onClick={() => {
-                    setEditingGasto(gasto);
-                    setShowModal(true);
-                  }} className="edit-button">
-                    <FaEdit />
-                  </button>
-                  <button onClick={() => deleteGasto(gasto.id)} className="delete-button">
-                    <FaTrash />
-                  </button>
-                </div>
-              </div>
-            );
-          })}
+          {sortedGastos.map(gasto => (
+            <GastoRow
+              key={gasto.id}
+              gasto={gasto}
+              onEdit={(gasto) => {
+                setEditingGasto(gasto);
+                setShowModal(true);
+              }}
+              onDelete={deleteGasto}
+            />
+          ))}
         </div>
       </div>
 
@@ -318,4 +300,4 @@ const Gastos = () => {
   );
 };
 
-export default Gastos;
+export default React.memo(Gastos);
