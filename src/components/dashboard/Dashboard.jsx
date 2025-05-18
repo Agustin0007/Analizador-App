@@ -34,6 +34,11 @@ import {
 } from 'chart.js';
 import { Pie, Bar, Line } from 'react-chartjs-2';
 import './Dashboard.css';
+import { MdAttachMoney,
+  MdQueryStats,
+  MdPriceCheck,
+  MdOutlineCategory
+} from 'react-icons/md';
 
 // Definir las categorías antes de usar
 export const CATEGORIAS = {
@@ -65,13 +70,29 @@ const Dashboard = () => {
   const { gastos = [] } = useGastos();
   const { isDark } = useTheme();
   const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null;
+  const [error, setError] = useState(null);
 
-  // Cálculos para las tarjetas de resumen
-  const totalGastos = gastos.reduce((sum, gasto) => sum + Number(gasto.monto), 0);
-  const gastosPorCategoria = gastos.reduce((acc, gasto) => {
+ 
+  // Add this calculation after gastosPorCategoria and before the error checks
+  const totalGastos = gastos?.reduce((sum, gasto) => sum + Number(gasto.monto), 0) || 0;
+  const gastosPorCategoria = gastos?.reduce((acc, gasto) => {
     acc[gasto.categoria] = (acc[gasto.categoria] || 0) + Number(gasto.monto);
     return acc;
-  }, {});
+  }, {}) || {};
+  
+  // Add the promedioDiario calculation here
+  const diasUnicos = [...new Set(gastos.map(g => g.fecha))].length || 1;
+  const promedioDiario = totalGastos / diasUnicos;
+
+  // Add error boundary for data loading
+  if (!gastos) {
+    return <div>Cargando datos...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   const categoriaMaxGasto = Object.entries(gastosPorCategoria)
     .sort(([,a], [,b]) => b - a)[0]?.[0] || 'N/A';
 
@@ -190,7 +211,7 @@ const Dashboard = () => {
         <h1 className="dashboard-title">Panel de Control</h1>
 
         <div className="stats-cards">
-          {/* 4 tarjetas existentes */}
+          {/* 4 tarjetas existentes - mantienen sus iconos actuales */}
           <div className="stat-card">
             <MdAccountBalance className="stat-icon" />
             <div className="stat-info">
@@ -227,25 +248,25 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Nuevas tarjetas */}
+          {/* Nuevas tarjetas con iconos diferentes */}
           <div className="stat-card">
-            <MdTrendingUp className="stat-icon" />
+            <MdAttachMoney className="stat-icon" /> {/* Cambio de icono */}
             <div className="stat-info">
               <h3>Promedio Mensual</h3>
               <p>${(totalGastos / (gastos.length || 1)).toFixed(2)}</p>
             </div>
           </div>
-
+          
           <div className="stat-card">
-            <MdTrendingDown className="stat-icon" />
+            <MdQueryStats className="stat-icon" /> {/* Cambio de icono */}
             <div className="stat-info">
-              <h3>Gasto Mínimo</h3>
-              <p>${Math.min(...gastos.map(g => Number(g.monto)), 0).toFixed(2)}</p>
+              <h3>Promedio Diario</h3>
+              <p>${promedioDiario.toFixed(2)}</p>
             </div>
           </div>
 
           <div className="stat-card">
-            <MdTrendingUp className="stat-icon" />
+            <MdPriceCheck className="stat-icon" /> {/* Cambio de icono */}
             <div className="stat-info">
               <h3>Gasto Máximo</h3>
               <p>${Math.max(...gastos.map(g => Number(g.monto)), 0).toFixed(2)}</p>
@@ -253,7 +274,7 @@ const Dashboard = () => {
           </div>
 
           <div className="stat-card">
-            <MdCategory className="stat-icon" />
+            <MdOutlineCategory className="stat-icon" /> {/* Cambio de icono */}
             <div className="stat-info">
               <h3>Total Categorías</h3>
               <p>{Object.keys(gastosPorCategoria).length}</p>

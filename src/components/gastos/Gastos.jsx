@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 import { useGastos } from '../../context/GastosContext';
 import { FaEdit, FaTrash, FaTimes } from 'react-icons/fa';
 import { BsSun, BsMoon } from 'react-icons/bs';
@@ -153,18 +154,96 @@ const Gastos = () => {
 
   const handleSubmit = (gastoData) => {
     try {
+      // Validate amount (monto)
+      const monto = parseFloat(gastoData.monto);
+      if (isNaN(monto) || monto <= 0) {
+        toast.error('El monto debe ser un número mayor a 0', {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: darkMode ? "dark" : "light",
+        });
+        return;
+      }
+  
+      // Validate category
+      if (!gastoData.categoria) {
+        toast.warning('Debe seleccionar una categoría', {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: darkMode ? "dark" : "light",
+        });
+        return;
+      }
+  
+      // Validate date
+      const selectedDate = new Date(gastoData.fecha);
+      const currentDate = new Date();
+      if (selectedDate > currentDate) {
+        toast.error('La fecha no puede ser futura', {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: darkMode ? "dark" : "light",
+        });
+        return;
+      }
+  
+      // Validate description
+      if (gastoData.descripcion && gastoData.descripcion.length > 100) {
+        toast.warning('La descripción no puede exceder los 100 caracteres', {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: darkMode ? "dark" : "light",
+        });
+        return;
+      }
+  
       if (editingGasto) {
         editGasto(editingGasto.id, gastoData);
+        toast.success('Gasto actualizado exitosamente', {
+          position: "top-right",
+          autoClose: 2000,
+          theme: darkMode ? "dark" : "light",
+        });
       } else {
         addGasto({
           ...gastoData,
           id: Date.now().toString(),
           fecha: gastoData.fecha
         });
+        toast.success('Gasto registrado exitosamente', {
+          position: "top-right",
+          autoClose: 2000,
+          theme: darkMode ? "dark" : "light",
+        });
       }
       setShowModal(false);
       setEditingGasto(null);
     } catch (error) {
+      toast.error('Error al guardar el gasto: ' + error.message, {
+        position: "top-right",
+        autoClose: 4000,
+        theme: darkMode ? "dark" : "light",
+      });
       console.error('Error al guardar el gasto:', error);
     }
   };

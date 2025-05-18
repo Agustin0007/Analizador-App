@@ -22,10 +22,10 @@ const PrivateRoute = ({ children }) => {
 
 function App() {
   return (
-    <AuthProvider>
-      <ThemeProvider>
-        <GastosProvider>
-          <BrowserRouter>
+    <BrowserRouter basename="/">
+      <AuthProvider>
+        <ThemeProvider>
+          <GastosProvider>
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
@@ -42,10 +42,10 @@ function App() {
               <Route path="/" element={<Navigate to="/dashboard" />} />
             </Routes>
             <ToastContainer />
-          </BrowserRouter>
-        </GastosProvider>
-      </ThemeProvider>
-    </AuthProvider>
+          </GastosProvider>
+        </ThemeProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 

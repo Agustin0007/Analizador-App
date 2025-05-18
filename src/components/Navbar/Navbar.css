@@ -148,6 +148,7 @@
 /* Componentes del sidebar */
 .sidebar-header {
   padding: 1.5rem;
+  padding-top: 3rem;  /* Added more padding at the top */
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
