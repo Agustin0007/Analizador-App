@@ -5,7 +5,18 @@ export default defineConfig({
   plugins: [react()],
   build: {
     rollupOptions: {
-      external: ['react-toastify'],
-    },
+      external: [
+        'react-toastify',
+        'react-icons',
+        'react-icons/fa',
+        'react-icons/md',
+        'react-icons/bs'
+      ]
+    }
   },
+  resolve: {
+    alias: {
+      'react-icons': 'react-icons'
+    }
+  }
 });
