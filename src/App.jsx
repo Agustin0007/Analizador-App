@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import { ToastContainer } from 'react-toastify';
 import Login from './components/login/Login';
@@ -11,11 +11,6 @@ import { GastosProvider } from './context/GastosContext';
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
 import Dashboard from './components/dashboard/Dashboard';
-
-const PublicRoute = ({ children }) => {
-  const { currentUser } = useAuth();
-  return currentUser ? <Navigate to="/dashboard" replace /> : children;
-};
 
 const PrivateRoute = ({ children }) => {
   const { currentUser, loading } = useAuth();
@@ -34,23 +29,12 @@ const PrivateRoute = ({ children }) => {
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
+      <HashRouter>
         <ThemeProvider>
           <GastosProvider>
             <Routes>
-              {/* Rutas públicas */}
-              <Route path="/login" element={
-                <PublicRoute>
-                  <Login />
-                </PublicRoute>
-              } />
-              <Route path="/register" element={
-                <PublicRoute>
-                  <Register />
-                </PublicRoute>
-              } />
-
-              {/* Rutas privadas */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
               <Route path="/dashboard" element={
                 <PrivateRoute>
                   <Dashboard />
@@ -61,26 +45,12 @@ function App() {
                   <Gastos />
                 </PrivateRoute>
               } />
-
-              {/* Redirecciones */}
-              <Route path="/" element={<Navigate to="/login" replace />} />
-              <Route path="*" element={<Navigate to="/login" replace />} />
+              <Route path="/" element={<Navigate to="/login" />} />
             </Routes>
-            <ToastContainer 
-              position="top-right"
-              autoClose={3000}
-              hideProgressBar={false}
-              newestOnTop
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme="light"
-            />
+            <ToastContainer />
           </GastosProvider>
         </ThemeProvider>
-      </BrowserRouter>
+      </HashRouter>
     </AuthProvider>
   );
 }
