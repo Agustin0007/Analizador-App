@@ -179,25 +179,44 @@ const Dashboard = () => {
     return d;
   }).reverse();
 
+  // Update the lineData configuration with distinct colors
   const lineData = {
     labels: ultimos6Meses.map(fecha => 
       fecha.toLocaleDateString('es-ES', { month: 'short', year: 'numeric' })
     ),
-    datasets: [{
-      label: 'Tendencia mensual',
-      data: ultimos6Meses.map(fecha => {
-        return gastos
-          .filter(g => {
-            const gFecha = new Date(g.fecha);
-            return gFecha.getMonth() === fecha.getMonth() && 
-                   gFecha.getFullYear() === fecha.getFullYear();
-          })
-          .reduce((sum, g) => sum + Number(g.monto), 0);
-      }),
-      borderColor: '#4CAF50',
-      tension: 0.4,
-      fill: false
-    }]
+    datasets: Object.keys(CATEGORIAS).map((categoria, index) => {
+      // Predefined distinct colors for each category
+      const categoryColors = [
+        '#FF6384', // Red
+        '#36A2EB', // Blue
+        '#FFCE56', // Yellow
+        '#4BC0C0', // Teal
+        '#9966FF', // Purple
+        '#FF9F40', // Orange
+        '#8AC24A', // Green
+        '#FF5252', // Bright Red
+        '#2196F3', // Bright Blue
+        '#FFEB3B'  // Bright Yellow
+      ];
+      
+      return {
+        label: CATEGORIAS[categoria].label,
+        data: ultimos6Meses.map(fecha => {
+          return gastos
+            .filter(g => {
+              const gFecha = new Date(g.fecha);
+              return gFecha.getMonth() === fecha.getMonth() && 
+                     gFecha.getFullYear() === fecha.getFullYear() &&
+                     g.categoria === categoria;
+            })
+            .reduce((sum, g) => sum + Number(g.monto), 0);
+        }),
+        borderColor: categoryColors[index % categoryColors.length],
+        backgroundColor: categoryColors[index % categoryColors.length],
+        tension: 0.4,
+        fill: false
+      };
+    })
   };
 
   return (
@@ -266,14 +285,6 @@ const Dashboard = () => {
           </div>
 
           <div className="stat-card">
-            <MdPriceCheck className="stat-icon" /> {/* Cambio de icono */}
-            <div className="stat-info">
-              <h3>Gasto Máximo</h3>
-              <p>${Math.max(...gastos.map(g => Number(g.monto)), 0).toFixed(2)}</p>
-            </div>
-          </div>
-
-          <div className="stat-card">
             <MdOutlineCategory className="stat-icon" /> {/* Cambio de icono */}
             <div className="stat-info">
               <h3>Total Categorías</h3>
@@ -318,10 +329,34 @@ const Dashboard = () => {
             <div className="chart-card">
               <h3>Tendencia de Gastos (6 meses)</h3>
               <div className="line-chart-container">
+                
                 <Line data={lineData} options={{
                   responsive: true,
                   maintainAspectRatio: false,
-                  scales: { y: { beginAtZero: true } }
+                  scales: { 
+                    y: { 
+                      beginAtZero: true,
+                      title: {
+                        display: true,
+                        text: 'Monto ($)'
+                      }
+                    },
+                    x: {
+                      title: {
+                        display: true,
+                        text: 'Mes'
+                      }
+                    }
+                  },
+                  plugins: {
+                    legend: {
+                      position: 'bottom',
+                      labels: {
+                        boxWidth: 12,
+                        padding: 20
+                      }
+                    }
+                  }
                 }} />
               </div>
             </div>

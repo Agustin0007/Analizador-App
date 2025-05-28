@@ -1,25 +1,42 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [currentUser, setCurrentUser] = useState(() => {
-    const savedUser = localStorage.getItem('user');
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
-  const [loading, setLoading] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    if (user) setCurrentUser(JSON.parse(user));
+    setLoading(false);
+  }, []);
 
   const signup = async (email, password, fullName) => {
     try {
       setLoading(true);
-      const newUser = {
-        email,
-        displayName: fullName,
-        id: Date.now().toString()
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      
+      if (users.some(u => u.email === email)) {
+        throw new Error('El correo ya está registrado');
+      }
+
+      const newUser = { 
+        email, 
+        password, 
+        fullName, 
+        id: Date.now().toString(),
+        createdAt: new Date().toISOString()
       };
+      const updatedUsers = [...users, newUser];
+      
+      localStorage.setItem('users', JSON.stringify(updatedUsers));
       localStorage.setItem('user', JSON.stringify(newUser));
       setCurrentUser(newUser);
+      
       return newUser;
+    } catch (error) {
+      throw error;
     } finally {
       setLoading(false);
     }
@@ -28,41 +45,29 @@ export function AuthProvider({ children }) {
   const login = async (email, password) => {
     try {
       setLoading(true);
-      const savedUser = localStorage.getItem('user');
-      if (savedUser) {
-        const user = JSON.parse(savedUser);
-        if (user.email === email) {
-          setCurrentUser(user);
-          return user;
-        }
-      }
-      throw new Error('Credenciales inválidas');
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
+      const user = users.find(u => u.email === email && u.password === password);
+      
+      if (!user) throw new Error('Invalid credentials');
+      
+      localStorage.setItem('user', JSON.stringify(user));
+      setCurrentUser(user);
+      return user;
     } finally {
       setLoading(false);
     }
   };
 
-  const logout = async () => {
-    try {
-      setLoading(true);
-      localStorage.removeItem('user');
-      setCurrentUser(null);
-    } finally {
-      setLoading(false);
-    }
+  const logout = () => {
+    localStorage.removeItem('user');
+    setCurrentUser(null);
   };
 
-  const value = {
-    currentUser,
-    signup,
-    login,
-    logout,
-    loading
-  };
+  const value = { currentUser, loading, signup, login, logout };
 
   return (
     <AuthContext.Provider value={value}>
-      {children}
+      {!loading && children}
     </AuthContext.Provider>
   );
 }

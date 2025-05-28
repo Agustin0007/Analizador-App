@@ -26,10 +26,25 @@ const PrivateRoute = ({ children }) => {
   return currentUser ? children : <Navigate to="/login" replace />;
 };
 
+// Add this toast configuration object
+const toastConfig = {
+  position: "top-right",
+  autoClose: 3000,
+  hideProgressBar: false,
+  newestOnTop: true,
+  closeOnClick: true,
+  rtl: false,
+  pauseOnFocusLoss: true,
+  draggable: true,
+  pauseOnHover: true,
+  theme: "colored",
+  toastStyle: { fontSize: '14px' }
+};
+
 function App() {
   return (
-    <AuthProvider>
-      <HashRouter>
+    <HashRouter>
+      <AuthProvider>
         <ThemeProvider>
           <GastosProvider>
             <Routes>
@@ -45,13 +60,13 @@ function App() {
                   <Gastos />
                 </PrivateRoute>
               } />
-              <Route path="/" element={<Navigate to="/login" />} />
+              <Route path="/" element={<Navigate to="/dashboard" />} />
             </Routes>
-            <ToastContainer />
+            <ToastContainer {...toastConfig} />
           </GastosProvider>
         </ThemeProvider>
-      </HashRouter>
-    </AuthProvider>
+      </AuthProvider>
+    </HashRouter>
   );
 }
 
